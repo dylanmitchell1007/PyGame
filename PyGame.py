@@ -1,3 +1,5 @@
+
+
 A*(start, goal)
 
 closedSet := {}
