@@ -5,11 +5,30 @@ class Node(object):
         self.gscore = 0
         self.hscore = 0
         self.fscore = 0
+        self.parent = None
+
     def CalGscore(self, node):
+        tentativeg = 0
         if(node.xpos == self.xpos or node.ypos == self.ypos):
-            self.gscore = 10
+            tentativeg = 10
         else: 
-            self.gscore = 14
+            tentativeg = 14
+        if self.parent is None:
+            self.gscore = tentativeg
+            self.parent = node
+        else:
+            if tentativeg < self.gscore:
+                self.gscore = tentativeg
+                self.parent = node
+                
+    def calhscore(self, goal):
+        xdif = abs(goal.xpos - self.xpos)
+        ydif = abs(goal.ypos - self.ypos)
+        self.hscore = 10 * (xdif + ydif)
+
+    def calfscore(self):
+        self.fscore = self.gscore + self.hscore
+
     def GetNeighbors(self, graph):
         neighbors = []
         right = [1, 0]
@@ -55,15 +74,14 @@ class Graph(object):
             if Node.compare(node, graphnode):
                 return graphnode
 
+    def Retrace(self, end):
+        retraced = []
+        currentNode = end
+        while currentNode.parent is not None:
+            retraced.append(currentNode)
+            currentNode = currentNode.parent
+        return retraced
 
-graph = Graph(5, 5)
-graph.gengraph()
-temp = graph.getnode(Node(0,0))
-
-
-print str(temp.xpos) + "," + str(temp.ypos)
-for node in temp.GetNeighbors(graph):
-    print node.xpos, node.ypos
 
 class Astar(object):
     def __init__(self, start, goal, graph):
@@ -74,20 +92,41 @@ class Astar(object):
         self.graph = graph
 
     def algorithm(self):
-        currentNode = startNode
+        currentNode = self.startNode
         self.openList.append(self.startNode)
-        while self.goalNode not in self.closedList:
+        while currentNode is not self.goalNode:
+            self.openList.sort(key=lambda x: x.fscore)
+            currentNode = self.openList[0]
+            if currentNode is self.goalNode:
+                graph.Retrace(self.goalNode)
             self.openList.remove(currentNode)
             self.closedList.append(currentNode)
-    
+            for node in currentNode.GetNeighbors(self.graph):
+                if node in self.closedList:
+                    continue
+                if node not in self.openList:
+                    self.openList.append(node)
+
+            for node in self.openList:
+                node.CalGscore(currentNode)
+                node.calhscore(self.goalNode)
+                node.calfscore()
+
+           
+           
     def SortList(self):
         for i in range(0, len(graph.nodes)):
             for j in range(0, len(graph.nodes)):
-                if(graph.nodes[i].fscore <= graph.nodes[j].fscore):
-                    temp = graph.nodes[i]
-                    graph.nodes[i] = graph.nodes[j]
-                    graph.nodes[j] = temp
+                if graph.nodes[i].fscore < graph.nodes[j].fscore:
+                    temp = graph.nodes[j]
+                    graph.nodes[j] = graph.nodes[i]
+                    graph.nodes[i] = temp
                     
 
+    
         
-        
+graph = Graph(5, 5)
+graph.gengraph()
+temp = graph.getnode(Node(0,0))
+algo = Astar(graph.nodes[0], graph.nodes[24], graph)
+algo.algorithm()
