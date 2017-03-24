@@ -2,22 +2,31 @@ class Node(object):
     def __init__(self, xpos, ypos):
         self.xpos = xpos
         self.ypos = ypos
-    
+        self.gscore = 0
+        self.hscore = 0
+        self.fscore = 0
+    def CalGscore(self, node):
+        if(node.xpos == self.xpos or node.ypos == self.ypos):
+            self.gscore = 10
+        else: 
+            self.gscore = 14
     def GetNeighbors(self, graph):
-          right = [1, 0]
-          topright = [1, 1]
-          top = [0, 1]
-          topleft = [-1, 1]
-          left = [-1, 0]
-          bottomleft = [-1, -1]
-          bottom = [0, -1]
-          bottomright = [1, -1]
-          dirs = [right, topright, top, topleft,
+        neighbors = []
+        right = [1, 0]
+        topright = [1, 1]
+        top = [0, 1]
+        topleft = [-1, 1]
+        left = [-1, 0]
+        bottomleft = [-1, -1]
+        bottom = [0, -1]
+        bottomright = [1, -1]
+        dirs = [right, topright, top, topleft,
                 left, bottomleft, bottom, bottomright]
-          for i in dirs:
-            for node in graph.nodes:
-                if node.xpos[0] == self.xpos[0] + i[0] and node.ypos[1] == self.ypos[1] + i[1]:
-                    self.GetNeighbors.append(Node)
+        for node in graph.nodes:
+            for i in dirs:
+                if node.xpos == self.xpos + i[0] and node.ypos == self.ypos + i[1]:
+                    neighbors.append(node)
+        return neighbors
 
     @staticmethod
     def compare(rhs, lhs):
@@ -51,7 +60,10 @@ graph = Graph(5, 5)
 graph.gengraph()
 temp = graph.getnode(Node(0,0))
 
+
 print str(temp.xpos) + "," + str(temp.ypos)
+for node in temp.GetNeighbors(graph):
+    print node.xpos, node.ypos
 
 class Astar(object):
     def __init__(self, start, goal, graph):
@@ -67,5 +79,15 @@ class Astar(object):
         while self.goalNode not in self.closedList:
             self.openList.remove(currentNode)
             self.closedList.append(currentNode)
+    
+    def SortList(self):
+        for i in range(0, len(graph.nodes)):
+            for j in range(0, len(graph.nodes)):
+                if(graph.nodes[i].fscore <= graph.nodes[j].fscore):
+                    temp = graph.nodes[i]
+                    graph.nodes[i] = graph.nodes[j]
+                    graph.nodes[j] = temp
+                    
+
         
         
