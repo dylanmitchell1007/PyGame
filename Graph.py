@@ -1,3 +1,6 @@
+import pygame
+from math import pi
+
 class Node(object):
     def __init__(self, value, identifier, pos):
         self.__value = value
@@ -43,8 +46,6 @@ class Graph(object):
         self.nodelist = []
         self.height = height
         self.width = width
-        self.rows = 5
-        self.cols = 5
         for i in range(0, height):
             for j in range(0, width):
                 self.nodelist.append(Node([i, j]))
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     test_nodes()
 
 
-def start_game():
+def start_game(self):
     '''init game'''
     pygame.init()
     pygame.display.set_mode((500, 500))

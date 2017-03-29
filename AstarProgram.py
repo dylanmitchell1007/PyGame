@@ -7,8 +7,7 @@ class Aapp:
 
     def __init__(self):
         self.Pygame = pygame
-        self.Pygame.init()
-        self.graph = Graph(5, 5)
+        self.graph = Graph(15, 15)
 
     def run(self):
         while not False:
@@ -24,7 +23,7 @@ class Aapp:
 
     def start(self, x, y):
         self.screen = self.Pygame.display.set_mode((x, y))
-        self.XYBounds = (x - 100, y - 100)
+        self.XYBounds = (x, y)
         self.graph.gengraph()
 
     def draw(self):
@@ -35,13 +34,21 @@ class Aapp:
         RED = (255,   0,   0)
         self.screen.fill(BLACK)
         offset = 35
-        pad = 10
+        self.ScreenEnd = offset + (self.graph.width * offset)
+        x = offset
+        y = self.XYBounds[1] - offset
+        
 
-        Nodea = self.graph.nodes[0]
-        apos = (Nodea.xpos, Nodea.ypos)
-        print apos
-        pygame.draw.circle(self.screen, BLUE, [300, 300], 25)
-
+        # Nodea = self.graph.nodes[0]
+        # apos = (Nodea.xpos, Nodea.ypos)
+        # print apos
+        for node in self.graph.nodes:
+            pygame.draw.circle(self.screen, BLUE, [x,y], 10)
+            x += offset
+            if x == self.ScreenEnd:
+                x = offset
+                y -= offset
+            self.graph.getnode(0, 0); 
 app = Aapp()
 app.start(600, 600)
 app.run()
