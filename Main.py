@@ -1,3 +1,5 @@
+import AstarTest
+from AstarTest import UnitTest
 class Node(object):
     def __init__(self, xpos, ypos):
         self.xpos = xpos
@@ -91,17 +93,17 @@ class Astar(object):
         self.goalNode = goal
         self.graph = graph
 
-    def algorithm(self):
-        currentNode = self.startNode
-        self.openList.append(self.startNode)
-        while currentNode is not self.goalNode:
+    def algorithm(self, start, goal, environment):
+        currentNode = start
+        self.openList.append(currentNode)
+        while currentNode is not goal:
             self.openList.sort(key=lambda x: x.fscore)
             currentNode = self.openList[0]
-            if currentNode is self.goalNode:
-                graph.Retrace(self.goalNode)
+            if currentNode is goal:
+                environment.Retrace(goal)
             self.openList.remove(currentNode)
             self.closedList.append(currentNode)
-            for node in currentNode.GetNeighbors(self.graph):
+            for node in currentNode.GetNeighbors(environment):
                 if node in self.closedList:
                     continue
                 if node not in self.openList:
@@ -109,7 +111,7 @@ class Astar(object):
 
             for node in self.openList:
                 node.CalGscore(currentNode)
-                node.calhscore(self.goalNode)
+                node.calhscore(goal)
                 node.calfscore()
 
            
@@ -129,4 +131,7 @@ graph = Graph(5, 5)
 graph.gengraph()
 temp = graph.getnode(Node(0,0))
 algo = Astar(graph.nodes[0], graph.nodes[24], graph)
-algo.algorithm()
+algo.algorithm(0,0,0)
+test = UnitTest("test.txt")
+test.gentestcases()
+a = test.testastar(algo.algorithm)
